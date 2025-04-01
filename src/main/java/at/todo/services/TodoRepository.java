@@ -1,13 +1,10 @@
 package at.todo.services;
 
 import at.todo.models.TodoModel;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TodoRepository
-{
-    public List<TodoModel> getAllTodo ();
-    public void addTodo();
-    public void UpdateTodo();
-    public void deleteTodo();
+public interface TodoRepository extends JpaRepository<TodoModel, Long> {
+    List<TodoModel> findByUserId(String userId);
 }
