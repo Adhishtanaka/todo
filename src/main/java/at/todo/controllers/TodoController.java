@@ -46,6 +46,8 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<TodoModel> createTodo(@RequestBody TodoModel todoModel) {
+        String userId = SecurityUtils.getCurrentUserId();
+        todoModel.setUserId(userId);
         TodoModel Todo = todoService.createTodo(todoModel);
         return new ResponseEntity<>(Todo, HttpStatus.CREATED);
     }
