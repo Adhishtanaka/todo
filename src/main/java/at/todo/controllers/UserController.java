@@ -3,6 +3,8 @@ package at.todo.controllers;
 import at.todo.models.UserModel;
 import at.todo.services.JwtService;
 import at.todo.services.UserService;
+import at.todo.utils.SecurityUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +32,22 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
         Optional<UserModel> user = userService.findByUsername(username);
-        System.out.println("hiiii");
         if (user.isPresent() && userService.loginUser(user.get(), password)) {
             String token = jwtUtil.generateToken(username);
-            System.out.println("Generated Token: " + token);
             return ResponseEntity.ok(token);
         }
         return ResponseEntity.status(401).body("Invalid credentials");
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteTodo() {
+        String userId = SecurityUtils.getCurrentUserId();
+        assert userId != null;
+        boolean deleted = userService.deleteUser(Long.valueOf(userId));
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
